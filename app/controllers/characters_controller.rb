@@ -11,19 +11,24 @@ class CharactersController < ApplicationController
   def fetch_characters
     uri = URI('https://swapi.dev/api/people')
     response = Net::HTTP.get(uri)
-    @characters = JSON.parse(response)['results'].select do |char|
+    characters_data = JSON.parse(response)['results'].select do |char|
       char['mass'].to_i > 75 && char['mass'] != 'unknown'
     end
 
-    characters_with_details = @characters.map do |char|
+    characters_by_film = {}
+
+    characters_data.each do |char|
       homeworld = fetch_homeworld(char['homeworld'])
       films = fetch_films(char['films'])
-      Character.new(char['name'], char['mass'], homeworld, films)
+
+      films.each do |film|
+        characters_by_film[film] ||= []
+        characters_by_film[film] << Character.new(char['name'], char['mass'], homeworld, film)
+      end
     end
 
-    characters_with_details.group_by { |char| char.films }.transform_values { |chars| chars.sort_by(&:name) }
+    characters_by_film.transform_values { |chars| chars.sort_by(&:name) }
   end
-
   def fetch_homeworld(url)
     response = Net::HTTP.get(URI(url))
     JSON.parse(response)['name']
