@@ -15,7 +15,7 @@ Le modèle `Character` représente un personnage de l'univers Star Wars.
 - `name` (String) : Le nom du personnage.
 - `masse` (String) : La masse du personnage.
 - `homeworld` (String) : Le nom de la planète d'origine du personnage.
-- `Film` (string): représente un film de l'univers Star Wars.
+- `Films` (string): représente les films dans lesquels le personnage a participé.
 
 ### Characters Controller
 
